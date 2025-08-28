@@ -10,7 +10,6 @@ inherited FrmCadPedido: TFrmCadPedido
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  ExplicitTop = -36
   ExplicitWidth = 731
   ExplicitHeight = 599
   PixelsPerInch = 96
@@ -396,6 +395,7 @@ inherited FrmCadPedido: TFrmCadPedido
         Top = 34
         Width = 24
         Height = 24
+        ImageAlignment = iaCenter
         ImageIndex = 0
         Images = FrmMain.ImageList
         TabOrder = 4
@@ -406,6 +406,7 @@ inherited FrmCadPedido: TFrmCadPedido
         Top = 34
         Width = 24
         Height = 24
+        ImageAlignment = iaCenter
         ImageIndex = 1
         Images = FrmMain.ImageList
         TabOrder = 5

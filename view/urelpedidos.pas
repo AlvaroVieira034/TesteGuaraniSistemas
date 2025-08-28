@@ -30,6 +30,7 @@ type
     procedure BtnPesquisarClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure ChkRelatorioClick(Sender: TObject);
 
   private
     TblPedidos: TFDQuery;
@@ -53,6 +54,11 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TFrmRelPedidos.ChkRelatorioClick(Sender: TObject);
+begin
+  BtnPesquisar.Click;
+end;
 
 constructor TFrmRelPedidos.Create(AOwner: TComponent);
 begin

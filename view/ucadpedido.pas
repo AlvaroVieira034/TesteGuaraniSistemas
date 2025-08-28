@@ -171,6 +171,15 @@ begin
   TblClientes.Free;
   DsProdutos.Free;
   DsClientes.Free;
+
+  FProdutoController.Free;
+  FClienteController.Free;
+  FCliente.Free;
+  FPedido.Free;
+  FPedidoController.Free;
+  FPedidoItens.Free;
+  FPedidoItensController.Free;
+
   inherited Destroy;
 end;
 
@@ -960,12 +969,7 @@ end;
 procedure TFrmCadPedido.BtnSairClick(Sender: TObject);
 begin
   inherited;
-  FProdutoController.Free;
-  FClienteController.Free;
-  FPedido.Free;
-  FPedidoController.Free;
-  FPedidoItens.Free;
-  FPedidoItensController.Free;
+
   Close;
 end;
 
