@@ -1,0 +1,162 @@
+unit cliente.repository;
+
+interface
+
+uses iinterface.repository, cliente.model, conexao, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param,
+     Data.DB;
+
+type
+  TClienteRepository = class(TInterfacedObject, IInterfaceRepository<TCliente>)
+
+  private
+    QryClientes: TFDQuery;
+    Transacao: TFDTransaction;
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+    function Inserir(AEntity: TCliente): Boolean;
+    function Alterar(AEntity: TCliente; ACodigo: Integer): Boolean;
+    function Excluir(ACodigo: Integer): Boolean;
+    function ExecutarTransacao(AOperacao: TProc): Boolean;
+
+  end;
+
+implementation
+
+{ TProdutoRepository }
+
+constructor TClienteRepository.Create;
+begin
+  inherited Create;
+  Transacao := TConexao.GetInstance.Connection.CriarTransaction;
+  QryClientes := TConexao.GetInstance.Connection.CriarQuery;
+  QryClientes.Transaction := Transacao;
+end;
+
+destructor TClienteRepository.Destroy;
+begin
+  QryClientes.Free;
+  inherited;
+end;
+
+function TClienteRepository.Inserir(AEntity: TCliente): Boolean;
+begin
+  Result := ExecutarTransacao(
+    procedure
+    begin
+      with QryClientes, AEntity do
+      begin
+        Close;
+        SQL.Clear;
+        SQL.Add('insert into tab_cliente(');
+        SQL.Add('des_razaosocial, ');
+        SQL.Add('des_nomefantasia, ');
+        SQL.Add('des_cep, ');
+        SQL.Add('des_endereco, ');
+        SQL.Add('des_complemento, ');
+        SQL.Add('des_cidade, ');
+        SQL.Add('des_uf, ');
+        SQL.Add('des_cnpj, ');
+        SQL.Add('des_telefone) ');
+        SQL.Add('values (:des_razaosocial, ');
+        SQL.Add(':des_nomefantasia, ');
+        SQL.Add(':des_cep, ');
+        SQL.Add(':des_endereco, ');
+        SQL.Add(':des_complemento, ');
+        SQL.Add(':des_cidade, ');
+        SQL.Add(':des_uf,');
+        SQL.Add(':des_cnpj,');
+        SQL.Add(':des_telefone)');
+
+        ParamByName('DES_RAZAOSOCIAL').AsString := Des_RazaoSocial;
+        ParamByName('DES_NOMEFANTASIA').AsString := Des_NomeFantasia;
+        ParamByName('DES_CEP').AsString := Des_Cep;
+        ParamByName('DES_ENDERECO').AsString := Des_Endereco;
+        ParamByName('DES_COMPLEMENTO').AsString := Des_Complemento;
+        ParamByName('DES_CIDADE').AsString := Des_Cidade;
+        ParamByName('DES_UF').AsString := Des_UF;
+        ParamByName('DES_CNPJ').AsString := Des_Cnpj;
+        ParamByName('DES_TELEFONE').AsString := Des_Telefone;
+
+        ExecSQL;
+      end;
+    end);
+end;
+
+function TClienteRepository.Alterar(AEntity: TCliente; ACodigo: Integer): Boolean;
+begin
+  Result := ExecutarTransacao(
+    procedure
+    begin
+      with QryClientes, AEntity do
+      begin
+        Close;
+        SQL.Clear;
+        SQL.Add('update tab_cliente set ');
+        SQL.Add('des_razaosocial = :des_razaosocial, ');
+        SQL.Add('des_nomefantasia = :des_nomefantasia, ');
+        SQL.Add('des_cep = :des_cep, ');
+        SQL.Add('des_endereco = :des_endereco, ');
+        SQL.Add('des_complemento = :des_complemento, ');
+        SQL.Add('des_cidade = :des_cidade, ');
+        SQL.Add('des_uf = :des_uf, ');
+        SQL.Add('des_cnpj = :des_cnpj, ');
+        SQL.Add('des_telefone = :des_telefone ');
+        SQL.Add('where cod_cliente = :cod_cliente');
+
+        ParamByName('DES_RAZAOSOCIAL').AsString := Des_RazaoSocial;
+        ParamByName('DES_NOMEFANTASIA').AsString := Des_NomeFantasia;
+        ParamByName('DES_CEP').AsString := Des_Cep;
+        ParamByName('DES_ENDERECO').AsString := Des_Endereco;
+        ParamByName('DES_COMPLEMENTO').AsString := Des_Complemento;
+        ParamByName('DES_CIDADE').AsString := Des_Cidade;
+        ParamByName('DES_UF').AsString := Des_UF;
+        ParamByName('DES_CNPJ').AsString := Des_Cnpj;
+        ParamByName('DES_TELEFONE').AsString := Des_Telefone;
+        ParamByName('COD_CLIENTE').AsInteger := ACodigo;
+
+        ExecSQL;
+      end;
+    end);
+end;
+
+function TClienteRepository.Excluir(ACodigo: Integer): Boolean;
+begin
+  Result := ExecutarTransacao(
+    procedure
+    begin
+      with QryClientes do
+      begin
+        Close;
+        SQL.Clear;
+        SQL.Text := 'delete from tab_cliente where cod_cliente = :cod_cliente';
+        ParamByName('COD_CLIENTE').AsInteger := ACodigo;
+
+        ExecSQL;
+      end;
+    end);
+end;
+
+function TClienteRepository.ExecutarTransacao(AOperacao: TProc): Boolean;
+begin
+  Result := False;
+  if not Transacao.Connection.Connected then
+    Transacao.Connection.Open();
+
+  Transacao.StartTransaction;
+  try
+    AOperacao;
+    Transacao.Commit;
+    Result := True;
+  except
+    on E: Exception do
+    begin
+      Transacao.Rollback;
+      raise Exception.Create('Ocorreu um erro na transação do cliente! Erro: ' + E.Message);
+    end;
+  end;
+
+end;
+
+end.
