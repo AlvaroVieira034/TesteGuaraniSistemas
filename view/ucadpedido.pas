@@ -137,8 +137,6 @@ implementation
 constructor TFrmCadPedido.Create(AOwner: TComponent);
 begin
   inherited;
-  TblProdutos := TFDQuery.Create(nil);
-  TblClientes := TFDQuery.Create(nil);
   DsProdutos := TDataSource.Create(nil);
   DsClientes := TDataSource.Create(nil);
   TransacaoPedidos := TFDTransaction.Create(nil);
@@ -167,24 +165,12 @@ end;
 
 destructor TFrmCadPedido.Destroy;
 begin
-  TblProdutos.Free;
-  TblClientes.Free;
   DsProdutos.Free;
   DsClientes.Free;
-
-  FProdutoController.Free;
-  FClienteController.Free;
-  FCliente.Free;
-  FPedido.Free;
-  FPedidoController.Free;
-  FPedidoItens.Free;
-  FPedidoItensController.Free;
-
   inherited Destroy;
 end;
 
 procedure TFrmCadPedido.FormCreate(Sender: TObject);
-var sCampo: string;
 begin
   inherited;
   if TConexao.GetInstance.Connection.TestarConexao then
@@ -196,10 +182,6 @@ begin
     // Cria Tabelas
     TblProdutos := TConexao.GetInstance.Connection.CriarQuery;
     TblClientes := TConexao.GetInstance.Connection.CriarQuery;
-
-    // Cria DataSource
-    DsClientes := TConexao.GetInstance.Connection.CriarDataSource;
-    DsProdutos := TConexao.GetInstance.Connection.CriarDataSource;
 
     // Atribui DataSet às tabelas
     DsClientes.DataSet := TblClientes;
@@ -215,7 +197,6 @@ begin
     FPedidoItensController := TPedidoItensController.Create;
 
     // Variáveis locais
-    sCampo := 'vda.dta_pedido';
     totPedido := 0;
     pesqPedido := False;
     SetLength(ValoresOriginais, 4);
@@ -969,6 +950,11 @@ end;
 procedure TFrmCadPedido.BtnSairClick(Sender: TObject);
 begin
   inherited;
+  if Assigned(MTblPedidoItem) and MTblPedidoItem.Active then
+    MTblPedidoItem.Close;
+
+  if Assigned(TransacaoPedidos) and TransacaoPedidos.Active then
+    TransacaoPedidos.Rollback;
 
   Close;
 end;
@@ -976,6 +962,12 @@ end;
 procedure TFrmCadPedido.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
+  if Assigned(MTblPedidoItem) and MTblPedidoItem.Active then
+    MTblPedidoItem.Close;
+
+  if Assigned(TransacaoPedidos) and TransacaoPedidos.Active then
+    TransacaoPedidos.Rollback;
+
   Action := caFree;
 end;
 

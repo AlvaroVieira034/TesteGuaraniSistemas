@@ -210,7 +210,6 @@ object FrmRelPedidos: TFrmRelPedidos
       Height = 17
       Caption = 'Emitir relat'#243'rio com os dois produtos mais vendidos ?'
       TabOrder = 2
-      OnClick = ChkRelatorioClick
     end
   end
 end

@@ -395,7 +395,6 @@ inherited FrmCadPedido: TFrmCadPedido
         Top = 34
         Width = 24
         Height = 24
-        ImageAlignment = iaCenter
         ImageIndex = 0
         Images = FrmMain.ImageList
         TabOrder = 4
@@ -406,7 +405,6 @@ inherited FrmCadPedido: TFrmCadPedido
         Top = 34
         Width = 24
         Height = 24
-        ImageAlignment = iaCenter
         ImageIndex = 1
         Images = FrmMain.ImageList
         TabOrder = 5
