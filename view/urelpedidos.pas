@@ -2,6 +2,7 @@ unit urelpedidos;
 
 interface
 
+{$REGION 'Uses'}
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Forms, Vcl.Dialogs, UCadastroPadrao, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Data.DB,
@@ -13,8 +14,12 @@ uses
   iinterface.repository, cliente.service, iinterface.service, untFormat, upesqpedidos, umostrapedido,
   System.Generics.Collections;
 
+{$ENDREGION}
+
 type
   TFrmRelPedidos = class(TForm)
+
+{$REGION 'Componentes'}
     DbGridRelatorio: TDBGrid;
     Panel1: TPanel;
     Label1: TLabel;
@@ -24,12 +29,17 @@ type
     EdtDataAte: TEdit;
     BtnSair: TSpeedButton;
     ChkRelatorio: TCheckBox;
+
+{$ENDREGION}
+
     procedure EdtDataDeChange(Sender: TObject);
     procedure EdtDataAteChange(Sender: TObject);
     procedure BtnSairClick(Sender: TObject);
     procedure BtnPesquisarClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure ChkRelatorioClick(Sender: TObject);
+    procedure EdtDataDeExit(Sender: TObject);
 
   private
     TblPedidos: TFDQuery;
@@ -37,7 +47,6 @@ type
     FPedido: TPedido;
     FPedidoController: TPedidoController;
     FPedidoItens: TPedidoItens;
-    FPedidoItensController: TPedidoItensController;
 
     procedure PreencherGridRelatorio;
 
@@ -117,9 +126,19 @@ begin
   Formatar(EdtDataDe, TFormato.Dt);
 end;
 
+procedure TFrmRelPedidos.EdtDataDeExit(Sender: TObject);
+begin
+  EdtDataAte.Text := DateToStr(Date());
+end;
+
 procedure TFrmRelPedidos.EdtDataAteChange(Sender: TObject);
 begin
   Formatar(EdtDataAte, TFormato.Dt);
+end;
+
+procedure TFrmRelPedidos.ChkRelatorioClick(Sender: TObject);
+begin
+  PreencherGridRelatorio();
 end;
 
 procedure TFrmRelPedidos.BtnPesquisarClick(Sender: TObject);

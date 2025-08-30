@@ -100,6 +100,11 @@ type
     FPedidoItens: TPedidoItens;
     FPedidoItensController: TPedidoItensController;
     TransacaoPedidos : TFDTransaction;
+    totPedido, totPedidoAnt: Double;
+    idItem: Integer;
+    alterouGrid: Boolean;
+    sErro: string;
+
 
     procedure CarregarPedidos(ACodPedido: Integer);
     procedure InserirPedidoItens;
@@ -123,10 +128,7 @@ type
 
 var
   FrmCadPedido: TFrmCadPedido;
-  totPedido, totPedidoAnt: Double;
-  idItem: Integer;
-  alterouGrid: Boolean;
-  sErro: string;
+
 
 implementation
 
@@ -142,31 +144,34 @@ begin
   TransacaoPedidos := TFDTransaction.Create(nil);
 end;
 
-procedure TFrmCadPedido.DbGridItensPedidoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
-  inherited;
-  if Key = VK_RETURN then
-  begin
-    LCbxProdutos.KeyValue := MTblPedidoItemCOD_PRODUTO.AsInteger;
-    EdtQuantidade.Text := IntToStr(MTblPedidoItemVAL_QUANTIDADE.AsInteger);
-    EdtPrecoUnit.Text := FloatToStr(MTblPedidoItemVAL_PRECOUNITARIO.AsFloat);
-    EdtPrecoTotal.Text := FloatToStr(MTblPedidoItemVAL_TOTALITEM.AsFloat);
-    alterouGrid := True;
-    idItem := MTblPedidoItemID_Pedido.AsInteger;
-    totPedidoAnt := MTblPedidoItemVAL_TOTALITEM.AsFloat;
-    Key := 0;
-  end;
-
-  if Key = VK_DELETE then
-  begin
-   BtnDelItemGridClick(Sender);
-  end;
-end;
-
 destructor TFrmCadPedido.Destroy;
 begin
-  DsProdutos.Free;
-  DsClientes.Free;
+  if Assigned(MTblPedidoItem) and MTblPedidoItem.Active then
+    MTblPedidoItem.Close;
+
+  // DataSources
+  if Assigned(DsProdutos) then DsProdutos.Free;
+  if Assigned(DsClientes) then DsClientes.Free;
+  if Assigned(DsPedidoItem) then DsPedidoItem.Free;
+
+  // Controllers
+  if Assigned(FClienteController) then FClienteController.Free;
+  if Assigned(FProdutoController) then FProdutoController.Free;
+  if Assigned(FPedidoController) then  FPedidoController.Free;
+
+  // Models
+  if Assigned(FCliente) then FCliente.Free;
+  if Assigned(FPedido) then  FPedido.Free;
+  if Assigned(FPedidoItens) then FPedidoItens.Free;
+
+  // Transação
+  if Assigned(TransacaoPedidos) then
+  begin
+    if TransacaoPedidos.Active then
+      TransacaoPedidos.Rollback;
+
+  end;
+
   inherited Destroy;
 end;
 
@@ -976,6 +981,27 @@ begin
   inherited;
   if Key = VK_RETURN then
     perform(WM_NEXTDLGCTL,0,0)
+end;
+
+procedure TFrmCadPedido.DbGridItensPedidoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if Key = VK_RETURN then
+  begin
+    LCbxProdutos.KeyValue := MTblPedidoItemCOD_PRODUTO.AsInteger;
+    EdtQuantidade.Text := IntToStr(MTblPedidoItemVAL_QUANTIDADE.AsInteger);
+    EdtPrecoUnit.Text := FloatToStr(MTblPedidoItemVAL_PRECOUNITARIO.AsFloat);
+    EdtPrecoTotal.Text := FloatToStr(MTblPedidoItemVAL_TOTALITEM.AsFloat);
+    alterouGrid := True;
+    idItem := MTblPedidoItemID_Pedido.AsInteger;
+    totPedidoAnt := MTblPedidoItemVAL_TOTALITEM.AsFloat;
+    Key := 0;
+  end;
+
+  if Key = VK_DELETE then
+  begin
+   BtnDelItemGridClick(Sender);
+  end;
 end;
 
 

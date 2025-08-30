@@ -72,6 +72,7 @@ type
     ValoresOriginais: array of string;
     FCliente: TCliente;
     FClienteController: TClienteController;
+    sErro : string;
 
     procedure PreencherGridClientes;
     procedure PreencherCamposForm;
@@ -94,7 +95,7 @@ type
 
 var
   FrmCadCliente: TFrmCadCliente;
-  sErro : string;
+
 
 implementation
 
@@ -104,7 +105,6 @@ implementation
 
 uses System.SysUtils, System.JSON;
 
-
 constructor TFrmCadCliente.Create(AOwner: TComponent);
 begin
   inherited;
@@ -113,8 +113,8 @@ end;
 
 destructor TFrmCadCliente.Destroy;
 begin
-  if Assigned(DsClientes) then
-    DsClientes.Free;
+  if Assigned(DsClientes) then DsClientes.Free;
+  if Assigned(FCliente) then FCliente.Free;
 
   inherited Destroy;
 end;

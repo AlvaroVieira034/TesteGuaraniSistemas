@@ -191,6 +191,7 @@ object FrmRelPedidos: TFrmRelPedidos
       MaxLength = 10
       TabOrder = 0
       OnChange = EdtDataDeChange
+      OnExit = EdtDataDeExit
     end
     object EdtDataAte: TEdit
       Left = 224
@@ -204,12 +205,13 @@ object FrmRelPedidos: TFrmRelPedidos
       OnChange = EdtDataAteChange
     end
     object ChkRelatorio: TCheckBox
-      Left = 23
+      Left = 24
       Top = 46
       Width = 401
       Height = 17
       Caption = 'Emitir relat'#243'rio com os dois produtos mais vendidos ?'
       TabOrder = 2
+      OnClick = ChkRelatorioClick
     end
   end
 end
