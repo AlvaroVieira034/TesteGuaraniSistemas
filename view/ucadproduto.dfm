@@ -8,7 +8,6 @@ inherited FrmCadProduto: TFrmCadProduto
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  ExplicitTop = -45
   ExplicitWidth = 726
   ExplicitHeight = 528
   PixelsPerInch = 96

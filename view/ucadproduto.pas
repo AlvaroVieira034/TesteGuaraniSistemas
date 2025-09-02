@@ -10,7 +10,8 @@ uses
   FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
   FireDAC.Phys, FireDAC.Phys.MSSQL, FireDAC.Phys.MSSQLDef, FireDAC.VCLUI.Wait, FireDAC.Stan.Param,
   FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
-  conexao, produto.model, produto.controller, produto.repository, produto.service;
+  conexao, produto.model, produto.controller, produto.repository, produto.service, iinterface.repository,
+  iinterface.service, System.UITypes;
 
 {$ENDREGION}
 
@@ -59,6 +60,7 @@ type
     ValoresOriginais: array of string;
     FProduto: TProduto;
     FProdutoController: TProdutoController;
+    sErro: string;
 
     procedure PreencherGridProdutos;
     procedure PreencherCamposForm;
@@ -82,25 +84,13 @@ type
 
 var
   FrmCadProduto: TFrmCadProduto;
-  sErro: string;
+
 
 implementation
 
 {$R *.dfm}
 
 uses untFormat;
-
-{ TFrmCadProduto }
-
-procedure TFrmCadProduto.CbxFiltroChange(Sender: TObject);
-begin
-  inherited;
-  if CbxFiltro.Text = 'Todos' then
-     EdtPesquisar.Text := EmptyStr;
-
-  BtnPesquisar.Click;
-  EdtPesquisar.SetFocus;
-end;
 
 constructor TFrmCadProduto.Create(AOwner: TComponent);
 begin
@@ -110,19 +100,23 @@ end;
 
 destructor TFrmCadProduto.Destroy;
 begin
-  if Assigned(DsProdutos) then
-    DsProdutos.Free;
+  if Assigned(DsProdutos) then DsProdutos.Free;
+  if Assigned(FProduto) then FProduto.Free;
 
   inherited Destroy;
 end;
 
 procedure TFrmCadProduto.FormCreate(Sender: TObject);
+var Repository: IInterfaceRepository<TProduto>;
+    Service: IInterfaceService<TProduto>;
 begin
   inherited;
   if TConexao.GetInstance.Connection.TestarConexao then
   begin
+    Repository := TProdutoRepository.Create;
+    Service    := TProdutoService.Create;
     FProduto := TProduto.Create;
-    FProdutoController := TProdutoController.Create(TProdutoRepository.Create, TProdutoService.Create);
+    FProdutoController := TProdutoController.Create(Repository, Service);
     GetDataSource();
     FOperacao := opInicio;
     SetLength(ValoresOriginais, 4);
@@ -392,6 +386,16 @@ begin
   inherited;
   FOperacao := opNavegar;
   VerificaBotoes(FOperacao);
+end;
+
+procedure TFrmCadProduto.CbxFiltroChange(Sender: TObject);
+begin
+  inherited;
+  if CbxFiltro.Text = 'Todos' then
+     EdtPesquisar.Text := EmptyStr;
+
+  BtnPesquisar.Click;
+  EdtPesquisar.SetFocus;
 end;
 
 procedure TFrmCadProduto.EdtPesquisarChange(Sender: TObject);

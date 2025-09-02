@@ -11,8 +11,8 @@ type
 
   private
     FCliente: TCliente;
-    FClienteRepository : TClienteRepository;
-    FClienteService : TClienteService;
+    FClienteRepository : IInterfaceRepository<TCliente>;
+    FClienteService : IInterfaceService<TCliente>;
 
   public
     constructor Create(AClienteRepository: IInterfaceRepository<TCliente>; AClienteService: IInterfaceService<TCliente>);
@@ -36,15 +36,13 @@ implementation
 constructor TClienteController.Create(AClienteRepository: IInterfaceRepository<TCliente>; AClienteService: IInterfaceService<TCliente>);
 begin
   FCliente := TCliente.Create();
-  FClienteRepository := TClienteRepository.Create;
-  FClienteService := TClienteService.Create;
+  FClienteRepository := AClienteRepository;
+  FClienteService := AClienteService;
 end;
 
 destructor TClienteController.Destroy;
 begin
   FCliente.Free;
-  FClienteRepository.Free;
-  FClienteService.Free;
   inherited Destroy;
 end;
 

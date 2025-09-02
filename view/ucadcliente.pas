@@ -10,7 +10,8 @@ uses
   FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
   FireDAC.Phys, FireDAC.Phys.MSSQL, FireDAC.Phys.MSSQLDef, FireDAC.VCLUI.Wait, FireDAC.Stan.Param,
   FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client, cep.service,
-  conexao, cliente.model, cliente.controller, cliente.repository, cliente.service, System.UITypes;
+  conexao, cliente.model, cliente.controller, cliente.repository, cliente.service, iinterface.repository,
+  iinterface.service, System.UITypes;
 
 {$ENDREGION}
 
@@ -120,12 +121,16 @@ begin
 end;
 
 procedure TFrmCadCliente.FormCreate(Sender: TObject);
+var Repository: IInterfaceRepository<TCliente>;
+    Service: IInterfaceService<TCliente>;
 begin
   inherited;
   if TConexao.GetInstance.Connection.TestarConexao then
   begin
+    Repository := TClienteRepository.Create;
+    Service    := TClienteService.Create;
     FCliente := TCliente.Create;
-    FClienteController := TClienteController.Create(TClienteRepository.Create, TClienteService.Create);
+    FClienteController := TClienteController.Create(Repository, Service);
     GetDataSource();
     FOperacao := opInicio;
     SetLength(ValoresOriginais, 11);

@@ -11,8 +11,8 @@ type
 
   private
     FProduto: TProduto;
-    FProdutoRepository: TProdutoRepository;
-    FProdutoService: TProdutoService;
+    FProdutoRepository : IInterfaceRepository<TProduto>;
+    FProdutoService : IInterfaceService<TProduto>;
     FDataSource: TDataSource;
 
   public
@@ -39,8 +39,8 @@ implementation
 constructor TProdutoController.Create(AProdutoRepository: IInterfaceRepository<TProduto>; AProdutoService: IInterfaceService<TProduto>);
 begin
   FProduto := TProduto.Create();
-  FProdutoRepository := TProdutoRepository.Create;
-  FProdutoService := TProdutoService.Create;
+  FProdutoRepository := AProdutoRepository;
+  FProdutoService := AProdutoService;
 end;
 
 destructor TProdutoController.Destroy;
@@ -101,7 +101,7 @@ end;
 
 function TProdutoController.GetValorUnitario(ACodigo: Integer): Double;
 begin
-  Result := FProdutoService.GetValorUnitario(ACodigo);
+  Result := (FProdutoService as TProdutoService).GetValorUnitario(ACodigo);
 end;
 
 function TProdutoController.GetDataSource: TDataSource;
