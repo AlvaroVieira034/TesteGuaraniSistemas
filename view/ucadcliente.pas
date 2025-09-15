@@ -386,7 +386,6 @@ end;
 procedure TFrmCadCliente.BtnAlterarClick(Sender: TObject);
 begin
   inherited;
-  inherited;
   FOperacao := opEditar;
   PreencherCamposForm();
   VerificaBotoes(FOperacao);
